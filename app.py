@@ -72,10 +72,12 @@ def add_user():
     try:
         json_request = json.loads(request.get_data())
         group_tag = json_request['group_tag']
-        kw['email'] = json_request['email']
+        kw = json_request['data']
         loader.load_profile()
         group_list = loader.profile.group_list
         group = list(filter(lambda group:group.tag == group_tag, group_list))[0]
+        if group.protocol == "SS" or group.protocol == "Mtproto":
+            raise ValueError("只有Vmess/Socks协议能增加用户!")
         nw = NodeWriter(group.tag, group.index)
         nw.create_new_user(**kw)
     except Exception as e:
