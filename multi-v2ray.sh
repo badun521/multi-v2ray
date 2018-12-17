@@ -235,7 +235,7 @@ updateProject() {
         if [[ $FIR_COMMIT_AUTHOR == 'Jrohy' ]];then
             git reset --hard HEAD && git clean -d -f
             if [[ $FORCE == 1 ]]; then
-                git pull
+                git pull origin master
             else
                 git fetch origin && git checkout $UPDATE_VERSION
             fi
@@ -305,12 +305,15 @@ profileInit() {
 
         #产生默认配置mkcp+随机3种伪装类型type
         python3 -c "from config_modify import stream; stream.StreamModifier().random_kcp();"
-
         python3 $APP_PATH/client.py
-        python3 -c "from utils import open_port; open_port();"
     else
         python3 $APP_PATH/converter.py
     fi
+
+    bash $APP_PATH/global_setting/clean_iptables.sh
+    echo ""
+    echo -e "生成 $(colorEcho $BLUE iptables) 流量统计规则中.."
+    python3 -c "from utils import open_port; open_port();"
 }
 
 installFinish() {
